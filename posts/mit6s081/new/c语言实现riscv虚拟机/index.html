@@ -1,0 +1,472 @@
+<!doctype html><html itemscope itemtype=http://schema.org/WebPage lang=zh-cn><head><meta charset=utf-8><meta name=viewport content="width=device-width,initial-scale=1,maximum-scale=2"><meta name=robots content="noodp"><title>C语言实现RISCV虚拟机with Chatgpt4 - Deniffer's Blog</title><meta name=author content="Deniffer"><meta name=author-link content="https://blog.deniffer.com"><meta name=description content="做好拥抱chatgpt的机会了吗? 欢迎来到AGI时代的初期"><meta name=keywords content="chatgpt,risc-v"><meta itemprop=name content="C语言实现RISCV虚拟机with Chatgpt4"><meta itemprop=description content="做好拥抱chatgpt的机会了吗? 欢迎来到AGI时代的初期"><meta itemprop=datePublished content="2023-03-24T22:33:19+08:00"><meta itemprop=dateModified content="2023-03-24T22:33:19+08:00"><meta itemprop=wordCount content="4045"><meta itemprop=keywords content="chatgpt,risc-v,"><meta property="og:title" content="C语言实现RISCV虚拟机with Chatgpt4"><meta property="og:description" content="做好拥抱chatgpt的机会了吗? 欢迎来到AGI时代的初期"><meta property="og:type" content="article"><meta property="og:url" content="https://blog.deniffer.com/posts/mit6s081/new/c%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0riscv%E8%99%9A%E6%8B%9F%E6%9C%BA/"><meta property="article:section" content="posts"><meta property="article:published_time" content="2023-03-24T22:33:19+08:00"><meta property="article:modified_time" content="2023-03-24T22:33:19+08:00"><meta name=twitter:card content="summary"><meta name=twitter:title content="C语言实现RISCV虚拟机with Chatgpt4"><meta name=twitter:description content="做好拥抱chatgpt的机会了吗? 欢迎来到AGI时代的初期"><meta name=application-name content="FixIt"><meta name=apple-mobile-web-app-title content="FixIt"><meta name=theme-color data-light=#f8f8f8 data-dark=#252627 content="#f8f8f8"><meta name=msapplication-TileColor content="#da532c"><link rel="shortcut icon" type=image/x-icon href=/favicon.ico><link rel=icon type=image/png sizes=32x32 href=/favicon-32x32.png><link rel=icon type=image/png sizes=16x16 href=/favicon-16x16.png><link rel=apple-touch-icon sizes=180x180 href=/apple-touch-icon.png><link rel=mask-icon href=/safari-pinned-tab.svg color=#5bbad5><link rel=canonical href=https://blog.deniffer.com/posts/mit6s081/new/c%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0riscv%E8%99%9A%E6%8B%9F%E6%9C%BA/><link rel=prev href=https://blog.deniffer.com/posts/mit6s081/new/xv6%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/><link rel=stylesheet href=/css/style.min.css><link rel=stylesheet href=/lib/fontawesome-free/all.min.css><link rel=stylesheet href=/lib/animate/animate.min.css><script type=application/ld+json>{"@context":"http://schema.org","@type":"BlogPosting","headline":"C语言实现RISCV虚拟机with Chatgpt4","inLanguage":"zh-CN","mainEntityOfPage":{"@type":"WebPage","@id":"https:\/\/blog.deniffer.com\/posts\/mit6s081\/new\/c%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0riscv%E8%99%9A%E6%8B%9F%E6%9C%BA\/"},"genre":"posts","keywords":"chatgpt, risc-v","wordcount":4045,"url":"https:\/\/blog.deniffer.com\/posts\/mit6s081\/new\/c%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0riscv%E8%99%9A%E6%8B%9F%E6%9C%BA\/","datePublished":"2023-03-24T22:33:19+08:00","dateModified":"2023-03-24T22:33:19+08:00","publisher":{"@type":"Organization","name":""},"author":{"@type":"Person","name":"Deniffer"},"description":"做好拥抱chatgpt的机会了吗? 欢迎来到AGI时代的初期"}</script></head><body data-header-desktop=sticky data-header-mobile=auto><script>(window.localStorage?.getItem('theme')?localStorage.getItem('theme')==='dark':'auto'==='auto'?window.matchMedia('(prefers-color-scheme: dark)').matches:'auto'==='dark')&&document.body.setAttribute('data-theme','dark')</script><div class=wrapper><header class="desktop animate__faster" id=header-desktop><div class=header-wrapper><div class=header-title><a href=/ title="Deniffer's Blog"><img class="lazyload logo" src=/svg/loading.min.svg data-src=/logo.svg data-srcset="/logo.svg, /logo.svg 1.5x, /logo.svg 2x" data-sizes=auto alt="Deniffer's Blog" title="Deniffer's Blog"><span class=header-title-text> Deniffer's Blog</span></a><span class=header-subtitle></span></div><nav><ul class=menu><li class=menu-item><a class=menu-link href=/posts/ title=展示所有文章><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden=true></i> 所有文章</a></li><li class=menu-item><a class=menu-link href=/categories/ title=根据分类查找文章><i class="fa-solid fa-folder-open fa-fw fa-sm" aria-hidden=true></i> 分类</a></li><li class=menu-item><a class=menu-link href=/tags/ title=寻找所有标签><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden=true></i> 标签</a></li><li class=menu-item><a class=menu-link href=/about/ title=关于作者的个人信息><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden=true></i> 关于</a></li><li class="menu-item delimiter"></li><li class="menu-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></li></ul></nav></div></header><header class="mobile animate__faster" id=header-mobile><div class=header-container><div class=header-wrapper><div class=header-title><a href=/ title="Deniffer's Blog"><img class="lazyload logo" src=/svg/loading.min.svg data-src=/logo.svg data-srcset="/logo.svg, /logo.svg 1.5x, /logo.svg 2x" data-sizes=auto alt=/logo.svg title=/logo.svg><span class=header-title-text> Deniffer's Blog</span></a><span class=header-subtitle></span></div><div class=menu-toggle id=menu-toggle-mobile><span></span><span></span><span></span></div></div><nav><ul class=menu id=menu-mobile><li class=menu-item><a class=menu-link href=/posts/ title=展示所有文章><i class="fa-solid fa-archive fa-fw fa-sm" aria-hidden=true></i> 所有文章</a></li><li class=menu-item><a class=menu-link href=/categories/ title=根据分类查找文章><i class="fa-solid fa-folder-open fa-fw fa-sm" aria-hidden=true></i> 分类</a></li><li class=menu-item><a class=menu-link href=/tags/ title=寻找所有标签><i class="fa-solid fa-tags fa-fw fa-sm" aria-hidden=true></i> 标签</a></li><li class=menu-item><a class=menu-link href=/about/ title=关于作者的个人信息><i class="fa-solid fa-info-circle fa-fw fa-sm" aria-hidden=true></i> 关于</a></li><li class="menu-item theme-switch" title=切换主题><i class="fa-solid fa-adjust fa-fw" aria-hidden=true></i></li></ul></nav></div></header><main class=container data-page-style=wide><aside class=toc id=toc-auto><h2 class=toc-title>目录&nbsp;<i class="toc-icon fa-solid fa-angle-down fa-fw" aria-hidden=true></i></h2><div class=toc-content id=toc-content-auto></div></aside><aside class=aside-custom></aside><article class="page single"><div class=header><h1 class="single-title animate__animated animate__flipInX"><span>C语言实现RISCV虚拟机with Chatgpt4</span></h1><p class="single-subtitle animate__animated animate__fadeIn">利用chatgpt4 实现RISCV虚拟机</p></div><div class=post-meta><div class=post-meta-line><span class=post-author><a href=https://blog.deniffer.com title=作者 target=_blank rel="external nofollow noopener noreferrer author" class=author><img class="lazyload avatar" src=/svg/loading.min.svg data-src=https://oss-cdn.deniffer.com/blog/avatar.png data-srcset="https://oss-cdn.deniffer.com/blog/avatar.png, https://oss-cdn.deniffer.com/blog/avatar.png 1.5x, https://oss-cdn.deniffer.com/blog/avatar.png 2x" data-sizes=auto alt=Deniffer title=Deniffer>&nbsp;Deniffer</a></span>
+<span class=post-category>收录于 <a href=/categories/chatgpt/><i class="fa-regular fa-folder fa-fw" aria-hidden=true></i> chatgpt</a>&ensp;<a href=/categories/risc-v/><i class="fa-regular fa-folder fa-fw" aria-hidden=true></i> risc-v</a></span></div><div class=post-meta-line><span title="2023-03-24 22:33:19"><i class="fa-regular fa-calendar-alt fa-fw" aria-hidden=true></i>&nbsp;<time datetime=2023-03-24>2023-03-24</time></span>&nbsp;<span><i class="fa-solid fa-pencil-alt fa-fw" aria-hidden=true></i> 约 4045 字</span>&nbsp;<span><i class="fa-regular fa-clock fa-fw" aria-hidden=true></i> 预计阅读 9 分钟</span>&nbsp;<span id=/posts/mit6s081/new/c%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0riscv%E8%99%9A%E6%8B%9F%E6%9C%BA/ class="leancloud_visitors comment-visitors" data-flag-title="C语言实现RISCV虚拟机with Chatgpt4">
+<i class="fa-regular fa-eye fa-fw" aria-hidden=true></i>&nbsp;<span class=leancloud-visitors-count>-</span>&nbsp;次阅读
+</span>&nbsp;<span class=comment-count data-flag-title="C语言实现RISCV虚拟机with Chatgpt4">
+<i class="fa-regular fa-comments fa-fw" aria-hidden=true></i>&nbsp;<span data-xid=/posts/mit6s081/new/c%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0riscv%E8%99%9A%E6%8B%9F%E6%9C%BA/ class=valine-comment-count>-</span>&nbsp;条评论
+</span>&nbsp;</div></div><div class="details toc" id=toc-static data-kept=false><div class="details-summary toc-title"><span>目录</span>
+<span><i class="details-icon fa-solid fa-angle-right" aria-hidden=true></i></span></div><div class="details-content toc-content" id=toc-content-static><nav id=TableOfContents><ul><li><a href=#背景>背景</a><ul><li><a href=#写riscv虚拟机之前的准备>写RISCV虚拟机之前的准备</a></li><li><a href=#chatgpt4-定义riscv虚拟机所需的数据结构>chatgpt4 定义RISCV虚拟机所需的数据结构</a></li><li><a href=#chatgpt4定义支持的riscv指令>chatgpt4定义支持的RISCV指令</a></li><li><a href=#chatgpt4搭建起main函数框架>chatgpt4搭建起main函数框架</a></li><li><a href=#chatgpt4解析riscv指令>chatgpt4解析RISCV指令</a></li><li><a href=#chatgpt4-实现对应的virtual-routine>chatgpt4 实现对应的Virtual Routine</a></li><li><a href=#使用chatgpt4-实现risc-v虚拟机的感悟>使用chatgpt4 实现RISC-V虚拟机的感悟</a></li></ul></li></ul></nav></div></div><div class=content id=content><h2 id=背景>背景</h2><p>最近chatgpt4大火, 很多人包括我都能预感到chatgpt在不久的将来,将会对人类的生活造成巨大的影响, 因此我突发奇想能不能通过chatgpt让他来干一些我自己一个人干的不够好,但是有了他的帮助下比较容易的一件事情呢? 我想到了, 要不用C写一个RISCV虚拟机吧! Let&rsquo;s do it!</p><h3 id=写riscv虚拟机之前的准备>写RISCV虚拟机之前的准备</h3><p>首先,要明确的一点是,目前chatgpt4(截至2023/03/24)还不会比人类要强,只能说是人工智能这趟列车在逼近人类智慧的中后阶段, 不过这趟列车终将飞驰而过,把人类远远抛在后面. 但是chatgpt4 非常擅长于脏活累活, 我经常写好一个模块的增,然后让chatgpt根据我写的增,完善模块的删改查功能, 可以说chatgpt让整体的开发进度提速了300%-400%.</p><p>因此,在写RISCV虚拟机之前我们也是一样的,我们需要定义好我们想要的功能是什么样的,比如我们要支持32bits还是64bits的riscv指令? 我们只支持riscv的哪些指令的解析等等, 然后我们还需要定义我们虚拟机的结构,比如内存是怎么布局的?支持哪些特殊的virtual routine等等.</p><p>在本次的RISCV虚拟机中, 我们假定我们支持R/I/S/SB/U/UJ类型的RISC-V指令, 并且支持堆内存的分配,支持嵌套函数调用, 支持简单的通过读写特殊的内存地址转发到宿主机的stdin/stdout等, 同时我们还需要假定输入文件存放了符合要求的二进制RISCV指令, 注意并不是常见的ELF格式文件,而是直接将对应的汇编代码转译成二进制的文件.</p><h3 id=chatgpt4-定义riscv虚拟机所需的数据结构>chatgpt4 定义RISCV虚拟机所需的数据结构</h3><p>首先我们需要明确我们需要哪些数据结构</p><ul><li>代表32bits的riscv指令的structure instruction_t , 以及支持的指令类型<strong>riscv_instruction_type_t</strong></li><li>代表读入的二进制指令文件布局的structure blob_t</li><li>代表整个riscv的硬件状态的虚拟机structure cpu_t</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-C data-lang=C><span class=line><span class=cl><span class=c1>// RISC-V 指令类型枚举
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=k>enum</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>R_TYPE</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>I_TYPE</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>S_TYPE</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>SB_TYPE</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>U_TYPE</span><span class=p>,</span>
+</span></span><span class=line><span class=cl>    <span class=n>UJ_TYPE</span>
+</span></span><span class=line><span class=cl><span class=p>}</span> <span class=n>riscv_instruction_type_t</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// RISC-V 指令结构体
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=k>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>riscv_instruction_type_t</span> <span class=n>type</span><span class=p>;</span> <span class=c1>// 指令类型
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>uint32_t</span> <span class=n>opcode</span><span class=p>;</span>              <span class=c1>// 操作码
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>uint32_t</span> <span class=n>rd</span><span class=p>;</span>                  <span class=c1>// 目标寄存器
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>uint32_t</span> <span class=n>rs1</span><span class=p>;</span>                 <span class=c1>// 源寄存器 1
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>uint32_t</span> <span class=n>rs2</span><span class=p>;</span>                 <span class=c1>// 源寄存器 2
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>uint32_t</span> <span class=n>funct3</span><span class=p>;</span>              <span class=c1>// 功能码 3
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>uint32_t</span> <span class=n>funct7</span><span class=p>;</span>              <span class=c1>// 功能码 7
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>int32_t</span> <span class=n>imm</span><span class=p>;</span>                  <span class=c1>// 立即数
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span> <span class=n>riscv_instruction_t</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 存储指令和数据内存的结构体 
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>struct</span> <span class=n>blob</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>char</span> <span class=n>inst_mem</span><span class=p>[</span><span class=n>INST_MEM_SIZE</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>    <span class=kt>char</span> <span class=n>data_mem</span><span class=p>[</span><span class=n>DATA_MEM_SIZE</span><span class=p>];</span>
+</span></span><span class=line><span class=cl><span class=p>}</span> <span class=n>blob</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl><span class=c1>// 定义CPU结构体，包含寄存器、数据内存和程序计数器
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=k>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=n>registers</span><span class=p>[</span><span class=n>NUM_REGISTERS</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>    <span class=kt>char</span> <span class=n>data_mem</span><span class=p>[</span><span class=n>DATA_MEM_SIZE</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=n>pc</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span> <span class=n>cpu_t</span><span class=p>;</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=chatgpt4定义支持的riscv指令>chatgpt4定义支持的RISCV指令</h3><p>我们需要支持R/I/S/SB/U/UJ类型的指令, 那让我们看看这些指令的结构长什么样子</p><figure align=center><img src=/img/image-20230326160159942.png alt width=70% height=70%>
+<figcation></figcation></figure><p>其实不难看出,最难的部分在于imm立即数的解析, 其实说实话我对于chatgpt4生成的instruction_t并不太满意, 理由是一个instruction 就要占8*4Bytes =32Bytes, 最理想的情况下,应该是一个instruction 就是4Bytes, 但是这样需要为每个类型的指令都新增一个structure,我觉得不太优雅就否了这个选项. 虽然他也给了我差强人意的8Bytes的选项, 他是这样定义的</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-C data-lang=C><span class=line><span class=cl><span class=k>typedef</span> <span class=k>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=nl>opcode</span> <span class=p>:</span> <span class=mi>7</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=nl>rd</span> <span class=p>:</span> <span class=mi>5</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=nl>funct3</span> <span class=p>:</span> <span class=mi>3</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=nl>rs1</span> <span class=p>:</span> <span class=mi>5</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=nl>rs2</span> <span class=p>:</span> <span class=mi>5</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=nl>funct7</span> <span class=p>:</span> <span class=mi>7</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>union</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>uint32_t</span> <span class=nl>imm</span> <span class=p>:</span> <span class=mi>12</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=kt>uint32_t</span> <span class=nl>imm_hi</span> <span class=p>:</span> <span class=mi>20</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>};</span>
+</span></span><span class=line><span class=cl><span class=p>}</span> <span class=n>instruction_t</span><span class=p>;</span>  <span class=c1>// 每个instruction_t占8个字节
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=k>typedef</span> <span class=k>struct</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>riscv_instruction_type_t</span> <span class=n>type</span><span class=p>;</span> <span class=c1>// 指令类型
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>uint32_t</span> <span class=n>opcode</span><span class=p>;</span>              <span class=c1>// 操作码
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>uint32_t</span> <span class=n>rd</span><span class=p>;</span>                  <span class=c1>// 目标寄存器
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>uint32_t</span> <span class=n>rs1</span><span class=p>;</span>                 <span class=c1>// 源寄存器 1
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>uint32_t</span> <span class=n>rs2</span><span class=p>;</span>                 <span class=c1>// 源寄存器 2
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>uint32_t</span> <span class=n>funct3</span><span class=p>;</span>              <span class=c1>// 功能码 3
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>uint32_t</span> <span class=n>funct7</span><span class=p>;</span>              <span class=c1>// 功能码 7
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=kt>int32_t</span> <span class=n>imm</span><span class=p>;</span>                  <span class=c1>// 立即数
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=p>}</span> <span class=n>riscv_instruction_t</span><span class=p>;</span> <span class=c1>// 每个instruction_t占32个字节
+</span></span></span></code></pre></td></tr></table></div></div><ul><li>关于imm解析的事情,如果有仔细看RISCV指令组成会发现, 有些imm的下标不是从0开始的,这是因为要做硬件上的一些优化导致的</li></ul><blockquote><p>详情可以参考stackoverflow <a href=https://stackoverflow.com/questions/58414772/why-are-risc-v-s-b-and-u-j-instruction-types-encoded-in-this-way target=_blank rel="external nofollow noopener noreferrer">https://stackoverflow.com/questions/58414772/why-are-risc-v-s-b-and-u-j-instruction-types-encoded-in-this-way</a></p></blockquote><ul><li>同时为了可读性 我们可以让chatgpt给我们生成对应的宏定义, 我就列几个举举例子, 虽然我们也可以做这件事情,但是如果我们来做的话,不仅特别繁琐,而且还容易弄错, 但是如果交给chatgpt的话, 它很快就给我们生成又快又好的宏定义了</li></ul><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=cp>#define OPCODE_R_TYPE 0x33
+</span></span></span><span class=line><span class=cl><span class=cp>#define OPCODE_I_TYPE1 0x03
+</span></span></span><span class=line><span class=cl><span class=cp>#define OPCODE_I_TYPE2 0x13
+</span></span></span><span class=line><span class=cl><span class=cp>#define OPCODE_S_TYPE 0x23
+</span></span></span><span class=line><span class=cl><span class=cp>#define OPCODE_SB_TYPE 0x63
+</span></span></span><span class=line><span class=cl><span class=cp>#define OPCODE_U_TYPE_LUI 0x37
+</span></span></span><span class=line><span class=cl><span class=cp>#define OPCODE_U_TYPE2 0x17
+</span></span></span><span class=line><span class=cl><span class=cp>#define OPCODE_UJ_TYPE_JAL 0x6F
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=c1>// 宏定义：funct3 和 funct7 值
+</span></span></span><span class=line><span class=cl><span class=c1>// ADD and SUB
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=cp>#define FUNCT3_ADD 0x00
+</span></span></span><span class=line><span class=cl><span class=cp>#define FUNCT7_ADD 0x00
+</span></span></span><span class=line><span class=cl><span class=cp>#define FUNCT7_SUB 0x20
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=c1>// SLL
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=cp>#define FUNCT3_SLL 0x01
+</span></span></span><span class=line><span class=cl><span class=cp>#define FUNCT7_SLL 0x00
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=c1>// SLT and SLTU
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=cp>#define FUNCT3_SLT 0x02
+</span></span></span><span class=line><span class=cl><span class=cp>#define FUNCT3_SLTU 0x03
+</span></span></span><span class=line><span class=cl><span class=cp>#define FUNCT7_SLT 0x00
+</span></span></span><span class=line><span class=cl><span class=cp>#define FUNCT7_SLTU 0x00
+</span></span></span><span class=line><span class=cl><span class=cp></span>
+</span></span><span class=line><span class=cl><span class=c1>// XOR
+</span></span></span><span class=line><span class=cl><span class=c1></span><span class=cp>#define FUNCT3_XOR 0x04
+</span></span></span><span class=line><span class=cl><span class=cp>#define FUNCT7_XOR 0x00
+</span></span></span></code></pre></td></tr></table></div></div><h3 id=chatgpt4搭建起main函数框架>chatgpt4搭建起main函数框架</h3><p>我们首先来看看chatgpt4为我们生成的main函数, 说实话没有什么可以挑剔的地方, 就算让我来写, 不仅花时间,而且也不会比他写的更好. 整体来说,看了整个main函数我们最关心的应该是execute_program这个函数的实现</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=kt>int</span> <span class=nf>main</span><span class=p>(</span><span class=kt>int</span> <span class=n>argc</span><span class=p>,</span> <span class=kt>char</span> <span class=o>*</span><span class=n>argv</span><span class=p>[])</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>argc</span> <span class=o>!=</span> <span class=mi>2</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;Usage: %s &lt;binary_file&gt;</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>argv</span><span class=p>[</span><span class=mi>0</span><span class=p>]);</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>FILE</span> <span class=o>*</span><span class=n>fp</span> <span class=o>=</span> <span class=n>fopen</span><span class=p>(</span><span class=n>argv</span><span class=p>[</span><span class=mi>1</span><span class=p>],</span> <span class=s>&#34;rb&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>fp</span> <span class=o>==</span> <span class=nb>NULL</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;Failed to open file: %s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>argv</span><span class=p>[</span><span class=mi>1</span><span class=p>]);</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>size_t</span> <span class=n>inst_mem_size</span> <span class=o>=</span> <span class=n>fread</span><span class=p>(</span><span class=n>blob</span><span class=p>.</span><span class=n>inst_mem</span><span class=p>,</span> <span class=mi>1</span><span class=p>,</span> <span class=n>INST_MEM_SIZE</span><span class=p>,</span> <span class=n>fp</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>inst_mem_size</span> <span class=o>==</span> <span class=mi>0</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;Failed to read instruction memory from file: %s</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>,</span> <span class=n>argv</span><span class=p>[</span><span class=mi>1</span><span class=p>]);</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span> <span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=n>fclose</span><span class=p>(</span><span class=n>fp</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=n>cpu_t</span> <span class=n>cpu</span> <span class=o>=</span> <span class=p>{</span><span class=mi>0</span><span class=p>};</span>
+</span></span><span class=line><span class=cl>    <span class=n>execute_program</span><span class=p>(</span><span class=o>&amp;</span><span class=n>cpu</span><span class=p>,</span> <span class=n>blob</span><span class=p>.</span><span class=n>inst_mem</span><span class=p>,</span> <span class=n>inst_mem_size</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>    <span class=k>return</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><h3 id=chatgpt4解析riscv指令>chatgpt4解析RISCV指令</h3><p>现在来到我们的重头戏了,如何解析这些RISCV指令呢? 来看看chatgpt写的execute_program</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-C data-lang=C><span class=line><span class=cl><span class=kt>void</span> <span class=nf>execute_program</span><span class=p>(</span><span class=n>cpu_t</span> <span class=o>*</span><span class=n>cpu</span><span class=p>,</span> <span class=k>const</span> <span class=kt>char</span> <span class=o>*</span><span class=n>inst_mem</span><span class=p>,</span> <span class=kt>uint32_t</span> <span class=n>inst_mem_size</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=n>cpu</span><span class=o>-&gt;</span><span class=n>pc</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=k>while</span> <span class=p>(</span><span class=n>cpu</span><span class=o>-&gt;</span><span class=n>pc</span> <span class=o>&lt;</span> <span class=n>inst_mem_size</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=kt>uint32_t</span> <span class=n>inst</span> <span class=o>=</span> <span class=o>*</span><span class=p>((</span><span class=kt>uint32_t</span> <span class=o>*</span><span class=p>)(</span><span class=n>inst_mem</span> <span class=o>+</span> <span class=n>cpu</span><span class=o>-&gt;</span><span class=n>pc</span><span class=p>));</span>
+</span></span><span class=line><span class=cl>        <span class=n>riscv_instruction_t</span> <span class=n>decoded_inst</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>decode_instruction</span><span class=p>(</span><span class=n>inst</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>decoded_inst</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// 根据指令类型执行相应的操作
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=k>switch</span> <span class=p>(</span><span class=n>decoded_inst</span><span class=p>.</span><span class=n>type</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=nl>R_TYPE</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=n>execute_r_type</span><span class=p>(</span><span class=n>cpu</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>decoded_inst</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=nl>I_TYPE</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=n>execute_i_type</span><span class=p>(</span><span class=n>cpu</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>decoded_inst</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=nl>S_TYPE</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=n>execute_s_type</span><span class=p>(</span><span class=n>cpu</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>decoded_inst</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=nl>SB_TYPE</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=n>execute_sb_type</span><span class=p>(</span><span class=n>cpu</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>decoded_inst</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=nl>U_TYPE</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=n>execute_u_type</span><span class=p>(</span><span class=n>cpu</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>decoded_inst</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=nl>UJ_TYPE</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>                <span class=n>execute_uj_type</span><span class=p>(</span><span class=n>cpu</span><span class=p>,</span> <span class=o>&amp;</span><span class=n>decoded_inst</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>default</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>                <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;Unknown instruction type encountered</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>                <span class=k>return</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=c1>// 更新 pc
+</span></span></span><span class=line><span class=cl><span class=c1></span>        <span class=k>if</span> <span class=p>(</span><span class=n>decoded_inst</span><span class=p>.</span><span class=n>type</span> <span class=o>!=</span> <span class=n>UJ_TYPE</span> <span class=o>&amp;&amp;</span> <span class=n>decoded_inst</span><span class=p>.</span><span class=n>type</span> <span class=o>!=</span> <span class=n>SB_TYPE</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>            <span class=n>cpu</span><span class=o>-&gt;</span><span class=n>pc</span> <span class=o>+=</span> <span class=mi>4</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>说实话, 写的也是很好,没有什么可以挑剔的话, 结构清晰,易于扩展, 以后我们要是需要支持别的指令只需要加一个对应的switch case就可以了,我们可以看到execute_program通过调用decode_instruction解析指令,然后根据不同的type, 去执行对应的类型的指令. 我们来看看decode_instruction的实现</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span><span class=lnt>29
+</span><span class=lnt>30
+</span><span class=lnt>31
+</span><span class=lnt>32
+</span><span class=lnt>33
+</span><span class=lnt>34
+</span><span class=lnt>35
+</span><span class=lnt>36
+</span><span class=lnt>37
+</span><span class=lnt>38
+</span><span class=lnt>39
+</span><span class=lnt>40
+</span><span class=lnt>41
+</span><span class=lnt>42
+</span><span class=lnt>43
+</span><span class=lnt>44
+</span><span class=lnt>45
+</span><span class=lnt>46
+</span><span class=lnt>47
+</span><span class=lnt>48
+</span><span class=lnt>49
+</span><span class=lnt>50
+</span><span class=lnt>51
+</span><span class=lnt>52
+</span><span class=lnt>53
+</span><span class=lnt>54
+</span><span class=lnt>55
+</span><span class=lnt>56
+</span><span class=lnt>57
+</span><span class=lnt>58
+</span><span class=lnt>59
+</span><span class=lnt>60
+</span><span class=lnt>61
+</span><span class=lnt>62
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-c data-lang=c><span class=line><span class=cl><span class=kt>void</span> <span class=nf>decode_instruction</span><span class=p>(</span><span class=kt>uint32_t</span> <span class=n>inst</span><span class=p>,</span> <span class=n>riscv_instruction_t</span> <span class=o>*</span><span class=n>decoded_inst</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=c1>// 从32位指令中提取各个字段
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>opcode</span> <span class=o>=</span> <span class=n>inst</span> <span class=o>&amp;</span> <span class=mh>0x7F</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>rd</span> <span class=o>=</span> <span class=p>(</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>7</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x1F</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>funct3</span> <span class=o>=</span> <span class=p>(</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>12</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x07</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>rs1</span> <span class=o>=</span> <span class=p>(</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>15</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x1F</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>rs2</span> <span class=o>=</span> <span class=p>(</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>20</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x1F</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>funct7</span> <span class=o>=</span> <span class=p>(</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>25</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x7F</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=c1>// 根据opcode确定指令类型并解码立即数
+</span></span></span><span class=line><span class=cl><span class=c1></span>    <span class=k>switch</span> <span class=p>(</span><span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>opcode</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=nl>OPCODE_R_TYPE</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>type</span> <span class=o>=</span> <span class=n>R_TYPE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=nl>OPCODE_I_TYPE1</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=nl>OPCODE_I_TYPE2</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>type</span> <span class=o>=</span> <span class=n>I_TYPE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>=</span> <span class=p>(</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>20</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0xFFF</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>&amp;</span> <span class=mh>0x800</span><span class=p>)</span> <span class=p>{</span> <span class=c1>// sign-extend if necessary
+</span></span></span><span class=line><span class=cl><span class=c1></span>                <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>|=</span> <span class=mh>0xFFFFF000</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>case</span> <span class=nl>OPCODE_S_TYPE</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>        <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>type</span> <span class=o>=</span> <span class=n>S_TYPE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>=</span> <span class=p>((</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>7</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x1F</span><span class=p>)</span> <span class=o>|</span> <span class=p>((</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>20</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0xFE0</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>if</span> <span class=p>(</span><span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>&amp;</span> <span class=mh>0x800</span><span class=p>)</span> <span class=p>{</span> <span class=c1>// sign-extend if necessary
+</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>|=</span> <span class=mh>0xFFFFF000</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=p>}</span>
+</span></span><span class=line><span class=cl>        <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=nl>OPCODE_SB_TYPE</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>type</span> <span class=o>=</span> <span class=n>SB_TYPE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>=</span> <span class=p>((</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>7</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x1E</span><span class=p>)</span> <span class=o>|</span> <span class=p>((</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>20</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x7E0</span><span class=p>)</span> <span class=o>|</span> <span class=p>((</span><span class=n>inst</span> <span class=o>&lt;&lt;</span> <span class=mi>4</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x800</span><span class=p>)</span> <span class=o>|</span> <span class=p>((</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>19</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x1000</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>&amp;</span> <span class=mh>0x1000</span><span class=p>)</span> <span class=p>{</span> <span class=c1>// sign-extend if necessary
+</span></span></span><span class=line><span class=cl><span class=c1></span>                <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>|=</span> <span class=mh>0xFFFFE000</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=nl>OPCODE_U_TYPE_LUI</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=nl>OPCODE_U_TYPE2</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>type</span> <span class=o>=</span> <span class=n>U_TYPE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>=</span> <span class=n>inst</span> <span class=o>&amp;</span> <span class=mh>0xFFFFF000</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=nl>OPCODE_UJ_TYPE_JAL</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>type</span> <span class=o>=</span> <span class=n>UJ_TYPE</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>=</span> <span class=p>((</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>12</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0xFF</span><span class=p>)</span> <span class=o>|</span> <span class=p>((</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>20</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x7FE</span><span class=p>)</span> <span class=o>|</span> <span class=p>((</span><span class=n>inst</span> <span class=o>&lt;&lt;</span> <span class=mi>11</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x800</span><span class=p>)</span> <span class=o>|</span> <span class=p>((</span><span class=n>inst</span> <span class=o>&gt;&gt;</span> <span class=mi>9</span><span class=p>)</span> <span class=o>&amp;</span> <span class=mh>0x100000</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>if</span> <span class=p>(</span><span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>&amp;</span> <span class=mh>0x100000</span><span class=p>)</span> <span class=p>{</span> <span class=c1>// sign-extend if necessary
+</span></span></span><span class=line><span class=cl><span class=c1></span>                <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>|=</span> <span class=mh>0xFFE00000</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=p>}</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>default</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>            <span class=c1>// 未知指令类型，可以将类型设置为无效
+</span></span></span><span class=line><span class=cl><span class=c1></span>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>type</span> <span class=o>=</span> <span class=o>-</span><span class=mi>1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=n>decoded_inst</span><span class=o>-&gt;</span><span class=n>imm</span> <span class=o>=</span> <span class=mi>0</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>说实话,我觉得很多人可能看这些代码可能似懂非懂, 包括刚开始的我也一样, 这个位运算是在干什么? 这个为什么要左移?等等, 但是记住,不懂得都可以问chatgpt 让他给你解释代码! <strong>不过打铁还需自身硬,如果chatgpt生成的代码是错误的, 你还需要有能力发现,并且提醒他改正,如果它无法改正还需要你自己亲手给他改.</strong></p><p>最后,我们看一下cpu是怎么执行指令然后更新自己的状态的,让我们浅看一个execute_sb_type函数, 其他函数其实也是大差不差</p><div class=highlight><div class=chroma><table class=lntable><tr><td class=lntd><pre tabindex=0 class=chroma><code><span class=lnt> 1
+</span><span class=lnt> 2
+</span><span class=lnt> 3
+</span><span class=lnt> 4
+</span><span class=lnt> 5
+</span><span class=lnt> 6
+</span><span class=lnt> 7
+</span><span class=lnt> 8
+</span><span class=lnt> 9
+</span><span class=lnt>10
+</span><span class=lnt>11
+</span><span class=lnt>12
+</span><span class=lnt>13
+</span><span class=lnt>14
+</span><span class=lnt>15
+</span><span class=lnt>16
+</span><span class=lnt>17
+</span><span class=lnt>18
+</span><span class=lnt>19
+</span><span class=lnt>20
+</span><span class=lnt>21
+</span><span class=lnt>22
+</span><span class=lnt>23
+</span><span class=lnt>24
+</span><span class=lnt>25
+</span><span class=lnt>26
+</span><span class=lnt>27
+</span><span class=lnt>28
+</span></code></pre></td><td class=lntd><pre tabindex=0 class=chroma><code class=language-C data-lang=C><span class=line><span class=cl><span class=kt>void</span> <span class=nf>execute_s_type</span><span class=p>(</span><span class=n>cpu_t</span> <span class=o>*</span><span class=n>cpu</span><span class=p>,</span> <span class=n>riscv_instruction_t</span> <span class=o>*</span><span class=n>inst</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=n>rs1</span> <span class=o>=</span> <span class=n>inst</span><span class=o>-&gt;</span><span class=n>rs1</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=n>rs2</span> <span class=o>=</span> <span class=n>inst</span><span class=o>-&gt;</span><span class=n>rs2</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=kt>uint32_t</span> <span class=n>address</span> <span class=o>=</span> <span class=n>cpu</span><span class=o>-&gt;</span><span class=n>registers</span><span class=p>[</span><span class=n>rs1</span><span class=p>]</span> <span class=o>+</span> <span class=n>inst</span><span class=o>-&gt;</span><span class=n>imm</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>if</span> <span class=p>(</span><span class=n>address</span> <span class=o>&gt;=</span> <span class=n>DATA_MEM_SIZE</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;Address out of range in S-type instruction</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>        <span class=k>return</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>    <span class=k>switch</span> <span class=p>(</span><span class=n>inst</span><span class=o>-&gt;</span><span class=n>funct3</span><span class=p>)</span> <span class=p>{</span>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=nl>FUNCT3_SB</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>cpu</span><span class=o>-&gt;</span><span class=n>data_mem</span><span class=p>[</span><span class=n>address</span><span class=p>]</span> <span class=o>=</span> <span class=p>(</span><span class=kt>uint8_t</span><span class=p>)(</span><span class=n>cpu</span><span class=o>-&gt;</span><span class=n>registers</span><span class=p>[</span><span class=n>rs2</span><span class=p>]</span> <span class=o>&amp;</span> <span class=mh>0xFF</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=nl>FUNCT3_SH</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=o>*</span><span class=p>((</span><span class=kt>uint16_t</span> <span class=o>*</span><span class=p>)</span><span class=o>&amp;</span><span class=n>cpu</span><span class=o>-&gt;</span><span class=n>data_mem</span><span class=p>[</span><span class=n>address</span><span class=p>])</span> <span class=o>=</span> <span class=p>(</span><span class=kt>uint16_t</span><span class=p>)(</span><span class=n>cpu</span><span class=o>-&gt;</span><span class=n>registers</span><span class=p>[</span><span class=n>rs2</span><span class=p>]</span> <span class=o>&amp;</span> <span class=mh>0xFFFF</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>case</span> <span class=nl>FUNCT3_SW</span><span class=p>:</span>
+</span></span><span class=line><span class=cl>            <span class=o>*</span><span class=p>((</span><span class=kt>uint32_t</span> <span class=o>*</span><span class=p>)</span><span class=o>&amp;</span><span class=n>cpu</span><span class=o>-&gt;</span><span class=n>data_mem</span><span class=p>[</span><span class=n>address</span><span class=p>])</span> <span class=o>=</span> <span class=n>cpu</span><span class=o>-&gt;</span><span class=n>registers</span><span class=p>[</span><span class=n>rs2</span><span class=p>];</span>
+</span></span><span class=line><span class=cl>            <span class=k>break</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>
+</span></span><span class=line><span class=cl>        <span class=k>default</span><span class=o>:</span>
+</span></span><span class=line><span class=cl>            <span class=n>fprintf</span><span class=p>(</span><span class=n>stderr</span><span class=p>,</span> <span class=s>&#34;Unknown S-type instruction encountered</span><span class=se>\n</span><span class=s>&#34;</span><span class=p>);</span>
+</span></span><span class=line><span class=cl>            <span class=k>return</span><span class=p>;</span>
+</span></span><span class=line><span class=cl>    <span class=p>}</span>
+</span></span><span class=line><span class=cl><span class=p>}</span>
+</span></span></code></pre></td></tr></table></div></div><p>这个例子里面由于S类型的指令都是更新内存的所以看不到对寄存器的修改, 但是对寄存器的修改差不多也是类似的.</p><h3 id=chatgpt4-实现对应的virtual-routine>chatgpt4 实现对应的Virtual Routine</h3><p>所谓的Virtual Routine 指的就是通过读写特殊的内存地址来达到实现一些目的, 类似于memory I/O ,</p><ul><li>比如我可以规定读写0x80ff 地址时 解释为malloc 行为, 分配一定的对内存;</li><li>读写0xffff地址时,解释为register dump, 打印所有的寄存器和pc的值到控制台</li></ul><h3 id=使用chatgpt4-实现risc-v虚拟机的感悟>使用chatgpt4 实现RISC-V虚拟机的感悟</h3><p>其实说实话,这个项目弄了还是还是蛮久的大概是1-2天左右, 但是如果没有chatgpt的情况下,我可能得花费10倍的时间才能完成同样的工作量, 很多时间都需要花在指令解析这个部分上, 但是有了chatgpt之后 我其实就是写一些prompt,然后读懂chatgpt写的代码,看他有没有写错,当然有些时候也会问他为什么要这么写, 以及让他以更加优雅的方式实现我的想法.在这些方面chatgpt都做的非常棒, 可以预见的未来,chatgpt + 中高级程序员 就能一个打十个, 真的类似于10倍效率的提升.</p><p>然后说下我对chatgpt的看法, 或者对人工智能这个领域的看法, 其实本身我个人对AI这个领域并不太感冒,甚至可以说一无所知, 因为我觉得这东西太玄乎了, 不是最顶尖那一波科研人员 都很难在这个领域有真正的建树. 相比而言,我更喜欢工程化的项目,你的进步是看得见的,你的理解是确定真实的. 因为工程上的东西, 你只要花时间,只要你不太笨,你多多少少都能学到东西, 而AI领域的知识,需要很好的数学背景而且你的进步是无法具体量化的,他的结果是无法用逻辑解释的. 但是chatgpt的出现,让我改变了我的想法, 虽然我依旧认为我的智力不足以在AI有所建树, 但是我觉得最不容易被淘汰的方向应该是要往工程化+AI的结合这个方向走,因为所有AI项目的落地都需要结合工程化, 我目前急需培养的能力就是补齐深度学习相关的知识,如果做好这方面的知识储备的话,我相信不久的未来能占到一些先机.</p><p>现在虽然chatgpt4仍有一些缺陷, 比如我尝试给一段二进制riscv指令给chatgpt4, 让他给我反编译成riscv汇编代码, 他还是无法很好的胜任这个工作, 但是我相信在不久的将来,可能是3年内 可能是5-10年内, 如果我再让chatgpt给我反汇编, 我相信他很好的完成这个工作, 估计这个时候,人工智能这趟列车已经超过了人类科学发展的列车, 人类最终的宿命有可能只是充当人工智能程序的boot程序. 留给我们在计算机科学领域上可以奋发的时间不多了.</p></div><div class=post-footer id=post-footer><div class=post-info><div class=post-info-line><div class=post-info-mod><span title="2023-03-24 22:33:19">更新于 2023-03-24&nbsp;</span></div><div class=post-info-license><span><a rel="license external nofollow noopener noreferrer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div></div><div class=post-info-line><div class=post-info-md></div><div class=post-info-share><span><a href=javascript:void(0); title="分享到 Twitter" data-sharer=twitter data-url=https://blog.deniffer.com/posts/mit6s081/new/c%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0riscv%E8%99%9A%E6%8B%9F%E6%9C%BA/ data-title="C语言实现RISCV虚拟机with Chatgpt4" data-hashtags=chatgpt,risc-v><i class="fa-brands fa-twitter fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); title="分享到 Facebook" data-sharer=facebook data-url=https://blog.deniffer.com/posts/mit6s081/new/c%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0riscv%E8%99%9A%E6%8B%9F%E6%9C%BA/ data-hashtag=chatgpt><i class="fa-brands fa-facebook-square fa-fw" aria-hidden=true></i></a>
+<a href=javascript:void(0); title="分享到 微博" data-sharer=weibo data-url=https://blog.deniffer.com/posts/mit6s081/new/c%E8%AF%AD%E8%A8%80%E5%AE%9E%E7%8E%B0riscv%E8%99%9A%E6%8B%9F%E6%9C%BA/ data-title="C语言实现RISCV虚拟机with Chatgpt4"><i class="fa-brands fa-weibo fa-fw" aria-hidden=true></i></a></span></div></div></div><div class=post-info-more><section class=post-tags><i class="fa-solid fa-tags fa-fw" aria-hidden=true></i>&nbsp;<a href=/tags/chatgpt/>chatgpt</a>,&nbsp;<a href=/tags/risc-v/>risc-v</a></section><section><span><a href=javascript:void(0); onclick=window.history.back()>返回</a></span>&nbsp;|&nbsp;<span><a href=/>主页</a></span></section></div><div class=post-nav><a href=/posts/mit6s081/new/xv6%E5%86%85%E5%AD%98%E5%B8%83%E5%B1%80/ class=post-nav-item rel=prev title=xv6内存布局><i class="fa-solid fa-angle-left fa-fw" aria-hidden=true></i>xv6内存布局</a></div></div><div id=comments><div id=disqus_thread class=comment></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://disqus.com/?ref_noscript rel="external nofollow noopener noreferrer">Disqus</a>.</noscript><div id=valine class=comment></div><noscript>Please enable JavaScript to view the comments powered by <a href=https://valine.js.org/ rel="external nofollow noopener noreferrer">Valine</a>.</noscript></div></article></main><footer class=footer><div class=footer-container><div class="footer-line powered">由 <a href=https://gohugo.io/ target=_blank rel="external nofollow noopener noreferrer" title="Hugo 0.100.2">Hugo</a> 强力驱动 | 主题 - <a href=https://github.com/hugo-fixit/FixIt target=_blank rel=external title="FixIt v0.2.17-RC"><img class=fixit-icon src=/fixit.min.svg alt="FixIt logo">&nbsp;FixIt</a></div><div class="footer-line copyright" itemscope itemtype=http://schema.org/CreativeWork><i class="fa-regular fa-copyright fa-fw" aria-hidden=true></i>
+<span itemprop=copyrightYear>2021 - 2023</span><span class=author itemprop=copyrightHolder>
+<a href=https://blog.deniffer.com target=_blank rel="external nofollow noopener noreferrer">Deniffer</a></span><span class="license footer-divider"><a rel="license external nofollow noopener noreferrer" href=https://creativecommons.org/licenses/by-nc/4.0/ target=_blank>CC BY-NC 4.0</a></span></div><div class="footer-line statistics"><span class=site-time title='网站运行中 ...'><i class="fa-solid fa-heartbeat fa-fw animate-icon" aria-hidden=true></i>&nbsp;<span class=run-times>网站运行中 ...</span></span></div></div></footer></div><div class=widgets><div class="fixed-buttons animate__faster d-none"><div class="fixed-button back-to-top" role=button aria-label=回到顶部><i class="fa-solid fa-arrow-up fa-fw" aria-hidden=true></i><span class=variant-numeric>0%</span></div><div class="fixed-button view-comments d-none" role=button aria-label=查看评论><i class="fa-solid fa-comment fa-fw" aria-hidden=true></i></div></div><div id=mask></div><div class=reading-progress-bar style=left:0;top:0></div><noscript><div class=noscript-warning>FixIt 主题在启用 JavaScript 的情况下效果最佳。</div></noscript></div><link rel=stylesheet href=/lib/valine/valine.min.css><script src=https://.disqus.com/embed.js defer></script><script src=/lib/valine/Valine.min.js></script><script src=/lib/lazysizes/lazysizes.min.js async defer></script><script src=/lib/sharer/sharer.min.js async defer></script><script>window.config={code:{copyTitle:"复制到剪贴板",maxShownLines:15},comment:{enable:!0,expired:!1,valine:{appId:"kEqDe4xjIfYnEFTRYCGxSVjc-gzGzoHsz",appKey:"7oaG2q6XsD6F46IZsYIwZWnA",avatar:"mp",el:"#valine",emojiCDN:"https://cdn.jsdelivr.net/npm/emoji-datasource-google@14.0.0/img/google/64/",emojiMaps:{100:"1f4af.png",alien:"1f47d.png",anger:"1f4a2.png",angry:"1f620.png",anguished:"1f627.png",astonished:"1f632.png",black_heart:"1f5a4.png",blue_heart:"1f499.png",blush:"1f60a.png",bomb:"1f4a3.png",boom:"1f4a5.png",broken_heart:"1f494.png",brown_heart:"1f90e.png",clown_face:"1f921.png",cold_face:"1f976.png",cold_sweat:"1f630.png",confounded:"1f616.png",confused:"1f615.png",cry:"1f622.png",crying_cat_face:"1f63f.png",cupid:"1f498.png",dash:"1f4a8.png",disappointed:"1f61e.png",disappointed_relieved:"1f625.png",dizzy:"1f4ab.png",dizzy_face:"1f635.png",drooling_face:"1f924.png",exploding_head:"1f92f.png",expressionless:"1f611.png",face_vomiting:"1f92e.png",face_with_cowboy_hat:"1f920.png",face_with_hand_over_mouth:"1f92d.png",face_with_head_bandage:"1f915.png",face_with_monocle:"1f9d0.png",face_with_raised_eyebrow:"1f928.png",face_with_rolling_eyes:"1f644.png",face_with_symbols_on_mouth:"1f92c.png",face_with_thermometer:"1f912.png",fearful:"1f628.png",flushed:"1f633.png",frowning:"1f626.png",ghost:"1f47b.png",gift_heart:"1f49d.png",green_heart:"1f49a.png",grimacing:"1f62c.png",grin:"1f601.png",grinning:"1f600.png",hankey:"1f4a9.png",hear_no_evil:"1f649.png",heart:"2764-fe0f.png",heart_decoration:"1f49f.png",heart_eyes:"1f60d.png",heart_eyes_cat:"1f63b.png",heartbeat:"1f493.png",heartpulse:"1f497.png",heavy_heart_exclamation_mark_ornament:"2763-fe0f.png",hole:"1f573-fe0f.png",hot_face:"1f975.png",hugging_face:"1f917.png",hushed:"1f62f.png",imp:"1f47f.png",innocent:"1f607.png",japanese_goblin:"1f47a.png",japanese_ogre:"1f479.png",joy:"1f602.png",joy_cat:"1f639.png",kiss:"1f48b.png",kissing:"1f617.png",kissing_cat:"1f63d.png",kissing_closed_eyes:"1f61a.png",kissing_heart:"1f618.png",kissing_smiling_eyes:"1f619.png",laughing:"1f606.png",left_speech_bubble:"1f5e8-fe0f.png",love_letter:"1f48c.png",lying_face:"1f925.png",mask:"1f637.png",money_mouth_face:"1f911.png",nauseated_face:"1f922.png",nerd_face:"1f913.png",neutral_face:"1f610.png",no_mouth:"1f636.png",open_mouth:"1f62e.png",orange_heart:"1f9e1.png",partying_face:"1f973.png",pensive:"1f614.png",persevere:"1f623.png",pleading_face:"1f97a.png",pouting_cat:"1f63e.png",purple_heart:"1f49c.png",rage:"1f621.png",relaxed:"263a-fe0f.png",relieved:"1f60c.png",revolving_hearts:"1f49e.png",right_anger_bubble:"1f5ef-fe0f.png",robot_face:"1f916.png",rolling_on_the_floor_laughing:"1f923.png",scream:"1f631.png",scream_cat:"1f640.png",see_no_evil:"1f648.png",shushing_face:"1f92b.png",skull:"1f480.png",skull_and_crossbones:"2620-fe0f.png",sleeping:"1f634.png",sleepy:"1f62a.png",slightly_frowning_face:"1f641.png",slightly_smiling_face:"1f642.png",smile:"1f604.png",smile_cat:"1f638.png",smiley:"1f603.png",smiley_cat:"1f63a.png",smiling_face_with_3_hearts:"1f970.png",smiling_imp:"1f608.png",smirk:"1f60f.png",smirk_cat:"1f63c.png",sneezing_face:"1f927.png",sob:"1f62d.png",space_invader:"1f47e.png",sparkling_heart:"1f496.png",speak_no_evil:"1f64a.png",speech_balloon:"1f4ac.png","star-struck":"1f929.png",stuck_out_tongue:"1f61b.png",stuck_out_tongue_closed_eyes:"1f61d.png",stuck_out_tongue_winking_eye:"1f61c.png",sunglasses:"1f60e.png",sweat:"1f613.png",sweat_drops:"1f4a6.png",sweat_smile:"1f605.png",thinking_face:"1f914.png",thought_balloon:"1f4ad.png",tired_face:"1f62b.png",triumph:"1f624.png",two_hearts:"1f495.png",unamused:"1f612.png",upside_down_face:"1f643.png",weary:"1f629.png",white_frowning_face:"2639-fe0f.png",white_heart:"1f90d.png",wink:"1f609.png",woozy_face:"1f974.png",worried:"1f61f.png",yawning_face:"1f971.png",yellow_heart:"1f49b.png",yum:"1f60b.png",zany_face:"1f92a.png",zipper_mouth_face:"1f910.png",zzz:"1f4a4.png"},enableQQ:!1,highlight:!0,lang:"zh-cn",pageSize:10,placeholder:"快来发表你的有趣观点吧!",recordIP:!0,visitor:!0}},siteTime:"2020-12-18T16:15:22+08:00"}</script><script src=/js/theme.min.js defer></script></body></html>
